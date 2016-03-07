@@ -64,6 +64,27 @@ namespace Fireworks.UI
 
 		private void Start()
 		{
+			UIMenuButton[] allMenuButtons = FindObjectsOfType<UIMenuButton>();
+			UIMenuButton clone = null;
+			foreach (UIMenuButton button in allMenuButtons)
+			{
+				if (button.name == "DecoBuilder")
+				{
+					GameObject cloneGO = Instantiate(button.gameObject);
+					cloneGO.transform.SetParent(button.transform.parent, false);
+					clone = cloneGO.GetComponent<UIMenuButton>();
+					RectTransform cloneTfm = cloneGO.GetComponent<RectTransform>();
+					Vector2 anchorMin = cloneTfm.anchorMin;
+					Vector2 anchorMax = cloneTfm.anchorMax;
+					anchorMin.x = 0.3515f;
+					anchorMax.x = 0.3615f;
+					cloneTfm.anchorMin = anchorMin;
+					cloneTfm.anchorMax = anchorMax;
+					Debug.Log("Parent has layout: " + button.transform.parent.GetComponent<LayoutGroup>());
+					break;
+				}
+			}
+
 			GameObject windowGO = Instantiate<GameObject>(rectTfmPrefab);
 			windowGO.name = "Firework Builder";
 
@@ -71,9 +92,15 @@ namespace Fireworks.UI
 			fireworkRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 150.0f, 300.0f);
 			fireworkRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 250.0f, 500.0f);
 
+			UIWindowSettings settings = windowGO.AddComponent<UIWindowSettings>();
+			settings.pinnable = false;
+			settings.uniqueTagString = "Firework";
+			settings.title = "Firework Builder";
+
 			fireworksWindow = windowGO.AddComponent<FireworksWindow>();
-			fireworksWindowFrame = UIWindowsController.Instance.spawnWindow(fireworksWindow, null);
-			fireworksWindowFrame.setTitle("Firework Builder");
+			clone.windowContentGO = fireworksWindow;
+			/*fireworksWindowFrame = UIWindowsController.Instance.spawnWindow(fireworksWindow, null);
+			fireworksWindowFrame.close();*/
 		}
 
 		public void CleanUp()
