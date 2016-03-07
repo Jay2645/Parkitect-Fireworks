@@ -1,0 +1,3 @@
+[submodule "Dependencies/DayNight"]
+	path = Dependencies/DayNight
+	url = https://github.com/Jay2645/Parkitect-Day-Night-Cycle.git
