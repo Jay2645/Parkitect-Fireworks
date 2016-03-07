@@ -34,6 +34,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\..\Desktop\Parkitect\Parkitect_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\Desktop\Parkitect\Parkitect_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -74,6 +77,10 @@
     <Compile Include="Dependencies\DayNight\Lamps\LampManager.cs" />
     <Compile Include="Dependencies\DayNight\Main.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="UI\FireworkBuilderItemEntry.cs" />
+    <Compile Include="UI\FireworkBuilderTab.cs" />
+    <Compile Include="UI\FireworksUIBuilder.cs" />
+    <Compile Include="UI\FireworksWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include=".git\" />

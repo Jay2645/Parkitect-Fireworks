@@ -1,4 +1,5 @@
-﻿using MiniJSON;
+﻿using Fireworks.UI;
+using MiniJSON;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -8,10 +9,13 @@ namespace Fireworks
 	public class Main : IMod, IModSettings
 	{
 		private Dictionary<string, object> settingsValueDictionary = new Dictionary<string, object>();
+		private FireworksUIBuilder uiBuilder;
 
 		#region Start Mod
 		public void onEnabled()
 		{
+			GameObject go = new GameObject("Fireworks UI Builder");
+			uiBuilder = go.AddComponent<FireworksUIBuilder>();
 			ReadSettingsFile();
 		}
 

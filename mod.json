@@ -1,7 +1,7 @@
 {
-    "BaseDir": "YourModFolder",
-    "EntryPoint": "YourMod.Main",
+    "BaseDir": "",
+    "EntryPoint": "Main",
     "IsDevelopment": true,
-    "Name": "Your First Mod",
-    "Project": "YourMod.csproj"
+    "Name": "Fireworks",
+    "Project": "Fireworks.csproj"
 }
