@@ -4,7 +4,10 @@ using UnityEngine.UI;
 
 namespace Fireworks.UI
 {
-	public class FireworkBuilderTab : BuilderTab
+	/// <summary>
+	/// The tab where players can select the firework launcher they want to build.
+	/// </summary>
+	public class FireworkLauncherBuilderTab : BuilderTab
 	{
 		protected override void Awake()
 		{
@@ -12,9 +15,14 @@ namespace Fireworks.UI
 
 			MakeItemDisplayPanel();
 
+			MakeBuilder();
+
 			base.Awake();
 		}
 
+		/// <summary>
+		/// This creates the template for all of the little UI thumbnails used by the window
+		/// </summary>
 		private void MakeUIItemEntry()
 		{
 			// Make Builder Entry
@@ -23,30 +31,37 @@ namespace Fireworks.UI
 			uiBuilderEntry.AddComponent<CanvasRenderer>();
 			uiBuilderEntry.AddComponent<RawImage>();
 			Button button = uiBuilderEntry.AddComponent<Button>();
-			FlatRideBuilderEntry builderEntry = uiBuilderEntry.AddComponent<FlatRideBuilderEntry>();
+			FireworkLauncherItemEntry builderEntry = uiBuilderEntry.AddComponent<FireworkLauncherItemEntry>();
 			builderEntry.name = "UI Entry";
 
 			// Also requires texts for the name and the price of the entry
-			GameObject sizeTextGO = Instantiate(FireworksUIBuilder.rectTfmPrefab);
-			sizeTextGO.name = "Size Text";
-			GameObject nameTextGO = Instantiate(sizeTextGO);
+			GameObject nameTextGO = Instantiate(FireworksUIBuilder.rectTfmPrefab);
 			nameTextGO.name = "Name Text";
-			GameObject priceTextGO = Instantiate(sizeTextGO);
+			GameObject priceTextGO = Instantiate(FireworksUIBuilder.rectTfmPrefab);
 			priceTextGO.name = "Price Text";
-			sizeTextGO.transform.SetParent(uiBuilderEntry.transform, false);
 			nameTextGO.transform.SetParent(uiBuilderEntry.transform, false);
 			priceTextGO.transform.SetParent(uiBuilderEntry.transform, false);
-			sizeTextGO.AddComponent<CanvasRenderer>();
 			priceTextGO.AddComponent<CanvasRenderer>();
 			nameTextGO.AddComponent<CanvasRenderer>();
-			builderEntry.sizeText = sizeTextGO.AddComponent<Text>();
 			builderEntry.priceText = priceTextGO.AddComponent<Text>();
 			builderEntry.nameText = nameTextGO.AddComponent<Text>();
+
+			/*GameObject backgroundImageGO = Instantiate(FireworksUIBuilder.rectTfmPrefab);
+			backgroundImageGO.AddComponent<CanvasRenderer>();
+			Image image = backgroundImageGO.AddComponent<Image>();
+			Color backgroundColor = Color.grey;
+			backgroundColor.a = 0.15f;
+			image.color = backgroundColor;
+			backgroundImageGO.transform.SetParent(uiBuilderEntry.transform, false);
+			backgroundImageGO.transform.SetAsLastSibling();*/
 
 			// Add it to our ItemEntryGO template
 			builderItemEntryGO = builderEntry;
 		}
 
+		/// <summary>
+		/// This creates the area where all the thumbnails will be displayed
+		/// </summary>
 		private void MakeItemDisplayPanel()
 		{
 			GameObject itemPanelGO = Instantiate(FireworksUIBuilder.rectTfmPrefab);
@@ -62,28 +77,19 @@ namespace Fireworks.UI
 			itemContentPanel.pivot = new Vector2(0.5f, 0.5f);
 		}
 
+		/// <summary>
+		/// This creates the actual builder that will be used to place the thumbnails once we click on them
+		/// </summary>
 		private void MakeBuilder()
 		{
 			GameObject fireworkBuilder = new GameObject("Firework Builder");
-			FlatRideBuilder builder = fireworkBuilder.AddComponent<FlatRideBuilder>();
+			FireworkLauncherBuilder builder = fireworkBuilder.AddComponent<FireworkLauncherBuilder>();
 			builderGO = builder;
 		}
 
 		protected override void addItems()
 		{
-			foreach (Attraction attraction in ScriptableSingleton<AssetManager>.Instance.getAttractionObjects())
-			{
-				if (attraction is FlatRide)
-				{
-					categoryTag = attraction.categoryTag;
-					addItem(attraction);
-				}
-			}
-		}
-
-		protected override void addItemEntryFor(BuildableObject item)
-		{
-			base.addItemEntryFor(item);
+			// Add all firework launchers	
 		}
 
 		protected override void onBuilt(SerializedMonoBehaviour builtObjectInstance)

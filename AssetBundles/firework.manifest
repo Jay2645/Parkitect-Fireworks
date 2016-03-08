@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 3549342755
+CRC: 2371896131
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: d4583c52d0e90ad7ef52afd6fc38ab3f
+    Hash: d9d3f0d5d914addfe0db8612f2d9845b
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 9b9fc4ed5d6b1a393636feee41405b10
+    Hash: 4c7187cdb43d5a4d6435d185aaf8a868
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -15,20 +15,20 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
-- Class: 23
-  Script: {instanceID: 0}
-- Class: 33
-  Script: {instanceID: 0}
-- Class: 43
+- Class: 28
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
-- Class: 65
+- Class: 198
   Script: {instanceID: 0}
-- Class: 90
-  Script: {instanceID: 0}
-- Class: 95
+- Class: 199
   Script: {instanceID: 0}
 Assets:
-- Assets/Models/Prefabs/Tiki Hut.prefab
+- Assets/Standard Assets/ParticleSystems/Prefabs/Firework-1.prefab
+- Assets/Standard Assets/ParticleSystems/Textures/ParticleCloudWhite.png
+- Assets/Standard Assets/ParticleSystems/Materials/ParticleFirework.mat
+- Assets/Standard Assets/ParticleSystems/Materials/ParticleSpark.mat
+- Assets/Standard Assets/ParticleSystems/Textures/ParticleFlare.png
+- Assets/Standard Assets/ParticleSystems/Textures/Spark.png
+- Assets/Standard Assets/ParticleSystems/Materials/ParticleSmokeWhite.mat
 Dependencies: []

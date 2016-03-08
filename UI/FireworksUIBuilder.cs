@@ -5,11 +5,16 @@ using UnityEngine.UI;
 
 namespace Fireworks.UI
 {
+	/// <summary>
+	/// Creates all of the fireworks UI.
+	/// </summary>
 	public class FireworksUIBuilder : MonoBehaviour
 	{
 		private FireworksWindow fireworksWindow;
 		private UIWindowFrame fireworksWindowFrame;
 		private FireworkLauncherItemEntry launcherItemEntry;
+
+		private UIMenuButton clone;
 
 		public static GameObject rectTfmPrefab
 		{
@@ -18,6 +23,8 @@ namespace Fireworks.UI
 				// Welcome to the hackiest place on earth
 				if (_rectTfmPrefab == null)
 				{
+					// RectTransforms can't be added to objects directly; you have to instantiate a prefab
+					// It's a pain to deal with the assetbundles needed to do that, so we're just going to steal one
 					RectTransform foundRectTfm = FindObjectOfType<RectTransform>();
 					GameObject instantiatedGO = Instantiate<GameObject>(foundRectTfm.gameObject);
 					foreach (Transform child in instantiatedGO.transform)
@@ -50,6 +57,8 @@ namespace Fireworks.UI
 						}
 					}
 					_rectTfmPrefab = instantiatedGO;
+
+					// Reset the Rect Transform:
 					RectTransform rectTfm = _rectTfmPrefab.GetComponent<RectTransform>();
 					rectTfm.anchorMin = Vector2.zero;
 					rectTfm.anchorMax = Vector2.one;
@@ -64,48 +73,83 @@ namespace Fireworks.UI
 
 		private void Start()
 		{
+			MakeBuilderMenuTab();
+			MakeFireworksBuilderWindow();
+			MakeShowWindow();
+		}
+
+		private void MakeBuilderMenuTab()
+		{
+			// Get all the buttons along the bottom
 			UIMenuButton[] allMenuButtons = FindObjectsOfType<UIMenuButton>();
-			UIMenuButton clone = null;
 			foreach (UIMenuButton button in allMenuButtons)
 			{
+				//  Hopefully they never change the name
 				if (button.name == "DecoBuilder")
 				{
-					GameObject cloneGO = Instantiate(button.gameObject);
-					cloneGO.transform.SetParent(button.transform.parent, false);
-					clone = cloneGO.GetComponent<UIMenuButton>();
-					RectTransform cloneTfm = cloneGO.GetComponent<RectTransform>();
+					GameObject fireworkUIMenuButton = Instantiate(button.gameObject);
+					fireworkUIMenuButton.transform.SetParent(button.transform.parent, false);
+					clone = fireworkUIMenuButton.GetComponent<UIMenuButton>();
+					RectTransform cloneTfm = fireworkUIMenuButton.GetComponent<RectTransform>();
 					Vector2 anchorMin = cloneTfm.anchorMin;
 					Vector2 anchorMax = cloneTfm.anchorMax;
 					anchorMin.x = 0.3515f;
 					anchorMax.x = 0.3615f;
 					cloneTfm.anchorMin = anchorMin;
 					cloneTfm.anchorMax = anchorMax;
-					Debug.Log("Parent has layout: " + button.transform.parent.GetComponent<LayoutGroup>());
+					fireworkUIMenuButton.name = "FireworkBuilder";
+					UITooltip tooltip = fireworkUIMenuButton.GetComponent<UITooltip>();
+					tooltip.text = "Firework Builder";
 					break;
 				}
 			}
+		}
 
+		private void MakeFireworksBuilderWindow()
+		{
+			UIWindowSettings settings = MakeWindow("Firework Builder", "FireworkBuilder", false);
+			GameObject windowGO = settings.gameObject;
+
+			// Actually add the window component, which makes it renderable
+			fireworksWindow = windowGO.AddComponent<FireworksWindow>();
+
+			// When our tab is clicked, it'll open up the new window
+			clone.windowContentGO = fireworksWindow;
+		}
+
+		private void MakeShowWindow()
+		{
+			UIWindowSettings settings = MakeWindow("Show Creator", "ShowCreator", false);
+			GameObject windowGO = settings.gameObject;
+			ShowWindow showWindow = windowGO.AddComponent<ShowWindow>();
+
+			UIWindowsController.Instance.spawnWindow(showWindow, null);
+		}
+
+		private static UIWindowSettings MakeWindow(string windowName, string windowTag, bool pinnable)
+		{
+			// Create the fireworks window GameObject
 			GameObject windowGO = Instantiate<GameObject>(rectTfmPrefab);
-			windowGO.name = "Firework Builder";
+			windowGO.name = windowName;
 
+			// Size the fireworks window
 			RectTransform fireworkRect = windowGO.GetComponent<RectTransform>();
 			fireworkRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 150.0f, 300.0f);
 			fireworkRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 250.0f, 500.0f);
 
+			// Add various settings to the window
 			UIWindowSettings settings = windowGO.AddComponent<UIWindowSettings>();
-			settings.pinnable = false;
-			settings.uniqueTagString = "Firework";
-			settings.title = "Firework Builder";
+			settings.pinnable = pinnable;
+			settings.uniqueTagString = windowTag;
+			settings.title = windowName;
 
-			fireworksWindow = windowGO.AddComponent<FireworksWindow>();
-			clone.windowContentGO = fireworksWindow;
-			/*fireworksWindowFrame = UIWindowsController.Instance.spawnWindow(fireworksWindow, null);
-			fireworksWindowFrame.close();*/
+			return settings;
 		}
 
 		public void CleanUp()
 		{
 			Destroy(fireworksWindow.gameObject);
+			Destroy(clone.gameObject);
 		}
 	}
 }

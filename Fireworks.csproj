@@ -71,16 +71,23 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Loaders\AssetBundleLoader.cs" />
     <Compile Include="Dependencies\DayNight\DayNight.cs" />
     <Compile Include="Dependencies\DayNight\EnvironmentManager.cs" />
     <Compile Include="Dependencies\DayNight\Lamps\Lamp.cs" />
     <Compile Include="Dependencies\DayNight\Lamps\LampManager.cs" />
     <Compile Include="Dependencies\DayNight\Main.cs" />
+    <Compile Include="Firework.cs" />
+    <Compile Include="FireworkLauncher.cs" />
+    <Compile Include="FireworkLauncherBuilder.cs" />
+    <Compile Include="Loaders\MusicFileLoader.cs" />
     <Compile Include="Main.cs" />
-    <Compile Include="UI\FireworkBuilderItemEntry.cs" />
-    <Compile Include="UI\FireworkBuilderTab.cs" />
+    <Compile Include="Music\WaveformMaker.cs" />
+    <Compile Include="UI\FireworkLauncherItemEntry.cs" />
+    <Compile Include="UI\FireworkLauncherBuilderTab.cs" />
     <Compile Include="UI\FireworksUIBuilder.cs" />
     <Compile Include="UI\FireworksWindow.cs" />
+    <Compile Include="UI\ShowWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include=".git\" />

@@ -14,6 +14,7 @@ namespace Fireworks
 		#region Start Mod
 		public void onEnabled()
 		{
+			AssetBundleLoader.Path = Path;
 			GameObject go = new GameObject("Fireworks UI Builder");
 			uiBuilder = go.AddComponent<FireworksUIBuilder>();
 			ReadSettingsFile();
