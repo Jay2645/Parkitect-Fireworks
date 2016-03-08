@@ -40,6 +40,10 @@ namespace Fireworks.Music
 
 		public void ChangeClipTime(float newTime)
 		{
+			if (!source.isPlaying)
+			{
+				source.Play();
+			}
 			songPercentComplete = newTime;
 			source.time = songPercentComplete * source.clip.length;
 		}

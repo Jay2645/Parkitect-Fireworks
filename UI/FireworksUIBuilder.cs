@@ -73,8 +73,8 @@ namespace Fireworks.UI
 
 		private void Start()
 		{
-			MakeBuilderMenuTab();
-			MakeFireworksBuilderWindow();
+			//MakeBuilderMenuTab();
+			//MakeFireworksBuilderWindow();
 			MakeShowWindow();
 		}
 
@@ -107,7 +107,7 @@ namespace Fireworks.UI
 
 		private void MakeFireworksBuilderWindow()
 		{
-			UIWindowSettings settings = MakeWindow("Firework Builder", "FireworkBuilder", false);
+			UIWindowSettings settings = MakeWindow("Firework Builder", "FireworkBuilder", false, new Vector2(500.0f, 300.0f));
 			GameObject windowGO = settings.gameObject;
 
 			// Actually add the window component, which makes it renderable
@@ -119,14 +119,14 @@ namespace Fireworks.UI
 
 		private void MakeShowWindow()
 		{
-			UIWindowSettings settings = MakeWindow("Show Creator", "ShowCreator", false);
+			UIWindowSettings settings = MakeWindow("Show Creator", "ShowCreator", false, new Vector2(600.0f, 150.0f));
 			GameObject windowGO = settings.gameObject;
 			ShowWindow showWindow = windowGO.AddComponent<ShowWindow>();
 
 			UIWindowsController.Instance.spawnWindow(showWindow, null);
 		}
 
-		private static UIWindowSettings MakeWindow(string windowName, string windowTag, bool pinnable)
+		private static UIWindowSettings MakeWindow(string windowName, string windowTag, bool pinnable, Vector2 size)
 		{
 			// Create the fireworks window GameObject
 			GameObject windowGO = Instantiate<GameObject>(rectTfmPrefab);
@@ -134,8 +134,8 @@ namespace Fireworks.UI
 
 			// Size the fireworks window
 			RectTransform fireworkRect = windowGO.GetComponent<RectTransform>();
-			fireworkRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, 150.0f, 300.0f);
-			fireworkRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, 250.0f, 500.0f);
+			fireworkRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Bottom, size.y / 2.0f, size.y);
+			fireworkRect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left, size.x / 2.0f, size.x);
 
 			// Add various settings to the window
 			UIWindowSettings settings = windowGO.AddComponent<UIWindowSettings>();
