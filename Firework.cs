@@ -20,6 +20,8 @@ namespace Fireworks
 			{
 				GameObject fireworkGO = AssetBundleLoader.LoadAsset("firework", "Firework-1");
 				defaultFirework = fireworkGO.GetComponent<ParticleSystem>();
+				defaultFirework.loop = false;
+				defaultFirework.transform.position = new Vector3(0.0f, 999.0f, 0.0f);
 			}
 			fireworkParticle = defaultFirework;
 		}
@@ -32,15 +34,18 @@ namespace Fireworks
 			}
 			else
 			{
-				return fireworkParticle.name;
+				return launcher.name + "(" + fireworkParticle.name + ")";
 			}
 		}
 
 		public void Launch()
 		{
-			if (fireworkParticle != null)
+			if (fireworkParticle != null && launcher != null)
 			{
-				Debug.Log("Launching " + fireworkParticle);
+				ParticleSystem firework = (ParticleSystem)Object.Instantiate(fireworkParticle, launcher.transform.position, Quaternion.Euler(-90.0f, 0.0f, 0.0f));
+				Debug.Log("Launching " + firework + " from " + launcher);
+				firework.loop = false;
+				Object.Destroy(firework.gameObject, 10.0f);
 			}
 		}
 	}

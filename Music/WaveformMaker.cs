@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Fireworks.UI;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Fireworks.Music
@@ -29,12 +30,18 @@ namespace Fireworks.Music
 		{
 			if (source.isPlaying)
 			{
-				if (Time.timeScale > 0.0f)
-				{
-					source.time *= Time.timeScale;
-				}
 				songPercentComplete = source.time / source.clip.length;
 				slider.value = songPercentComplete;
+			}
+			else if (ShowWindow.pauseButton.interactable)
+			{
+				ShowWindow.pauseButton.interactable = false;
+				ShowWindow.playButton.interactable = true;
+				if (songPercentComplete == 1.0f)
+				{
+					source.Stop();
+					slider.value = 0.0f;
+				}
 			}
 		}
 
