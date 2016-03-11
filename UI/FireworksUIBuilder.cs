@@ -10,6 +10,10 @@ namespace Fireworks.UI
 	/// </summary>
 	public class FireworksUIBuilder : MonoBehaviour
 	{
+		public static Material ghostMat;
+		public static Material ghostIntersectMat;
+		public static Material ghostCantBuildMat;
+
 		private FireworksWindow fireworksWindow;
 		private UIWindowFrame fireworksWindowFrame;
 		private FireworkLauncherItemEntry launcherItemEntry;
@@ -73,8 +77,8 @@ namespace Fireworks.UI
 
 		private void Start()
 		{
-			//MakeBuilderMenuTab();
-			//MakeFireworksBuilderWindow();
+			MakeBuilderMenuTab();
+			MakeFireworksBuilderWindow();
 			MakeShowWindow();
 		}
 
@@ -82,11 +86,15 @@ namespace Fireworks.UI
 		{
 			// Get all the buttons along the bottom
 			UIMenuButton[] allMenuButtons = FindObjectsOfType<UIMenuButton>();
+			DecoBuilderTab builderTab = null;
+			UIWindow decorationWindow = null;
 			foreach (UIMenuButton button in allMenuButtons)
 			{
 				//  Hopefully they never change the name
 				if (button.name == "DecoBuilder")
 				{
+					decorationWindow = Instantiate(button.windowContentGO);
+					builderTab = decorationWindow.gameObject.GetComponentInChildren<DecoBuilderTab>();
 					GameObject fireworkUIMenuButton = Instantiate(button.gameObject);
 					fireworkUIMenuButton.transform.SetParent(button.transform.parent, false);
 					clone = fireworkUIMenuButton.GetComponent<UIMenuButton>();
@@ -103,6 +111,15 @@ namespace Fireworks.UI
 					break;
 				}
 			}
+			if (builderTab != null)
+			{
+				Builder builder = Instantiate(builderTab.builderGO);
+				ghostMat = builder.ghostMaterial;
+				ghostIntersectMat = builder.ghostIntersectMaterial;
+				ghostCantBuildMat = builder.ghostCantBuildMaterial;
+				Destroy(builder.gameObject);
+			}
+			Destroy(decorationWindow.gameObject);
 		}
 
 		private void MakeFireworksBuilderWindow()

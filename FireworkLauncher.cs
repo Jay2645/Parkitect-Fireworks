@@ -6,6 +6,10 @@
 	/// </summary>
 	public class FireworkLauncher : Deco
 	{
-
+		protected override void Awake()
+		{
+			buildOnGrid = true;
+			base.Awake();
+		}
 	}
 }

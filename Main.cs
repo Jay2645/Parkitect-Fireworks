@@ -17,6 +17,7 @@ namespace Fireworks
 		{
 			AssetBundleLoader.Path = Path;
 			GameObject go = new GameObject("Fireworks UI Builder");
+			LauncherCreator.CreateLaunchers();
 			uiBuilder = go.AddComponent<FireworksUIBuilder>();
 			ReadSettingsFile();
 		}

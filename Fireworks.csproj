@@ -71,6 +71,7 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LauncherCreator.cs" />
     <Compile Include="Loaders\AssetBundleLoader.cs" />
     <Compile Include="Dependencies\DayNight\DayNight.cs" />
     <Compile Include="Dependencies\DayNight\EnvironmentManager.cs" />

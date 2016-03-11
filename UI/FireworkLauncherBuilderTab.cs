@@ -89,7 +89,11 @@ namespace Fireworks.UI
 
 		protected override void addItems()
 		{
-			// Add all firework launchers	
+			// Add all firework launchers
+			foreach (FireworkLauncher launcher in FireworkLauncherBuilder.allLaunchers)
+			{
+				addItem(launcher);
+			}
 		}
 
 		protected override void onBuilt(SerializedMonoBehaviour builtObjectInstance)
