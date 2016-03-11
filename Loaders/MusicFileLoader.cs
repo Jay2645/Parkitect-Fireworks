@@ -21,7 +21,7 @@ namespace Fireworks.Loaders
 					throw new Exception("Loading had an error:" + www.error);
 				}
 
-				clip = www.GetAudioClip(true, false, AudioType.WAV);
+				clip = www.GetAudioClip(true, false);
 				return www;
 			}
 			catch (Exception e)

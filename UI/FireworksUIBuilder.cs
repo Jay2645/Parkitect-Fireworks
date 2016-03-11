@@ -119,7 +119,7 @@ namespace Fireworks.UI
 
 		private void MakeShowWindow()
 		{
-			UIWindowSettings settings = MakeWindow("Show Creator", "ShowCreator", false, new Vector2(600.0f, 150.0f));
+			UIWindowSettings settings = MakeWindow("Show Creator", "ShowCreator", false, new Vector2(600.0f, 200.0f));
 			GameObject windowGO = settings.gameObject;
 			ShowWindow showWindow = windowGO.AddComponent<ShowWindow>();
 

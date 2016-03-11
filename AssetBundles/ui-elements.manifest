@@ -1,25 +1,45 @@
 ManifestFileVersion: 0
-CRC: 870267704
+CRC: 2668331827
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 14fbbf0531dafdf4c611d4418c06773a
+    Hash: 61b06ac303591733718ce9965a725b7f
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 51759c350dd5cae79a9b32ea7976a46e
+    Hash: 883297f0d63afc758eb870018648e397
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
 - Class: 28
+  Script: {instanceID: 0}
+- Class: 48
   Script: {instanceID: 0}
 - Class: 82
   Script: {instanceID: 0}
 - Class: 114
+  Script: {fileID: 1392445389, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: 853051423, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
   Script: {fileID: -765806418, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 - Class: 114
+  Script: {fileID: -1200242548, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: -2061169968, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: 1367256648, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
   Script: {fileID: -113659843, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: 708705254, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+- Class: 114
+  Script: {fileID: 2109663825, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
 - Class: 115
+  Script: {instanceID: 0}
+- Class: 128
   Script: {instanceID: 0}
 - Class: 213
   Script: {instanceID: 0}
@@ -30,4 +50,5 @@ ClassTypes:
 Assets:
 - Assets/Standard Assets/CrossPlatformInput/Sprites/SliderHandleSprite.png
 - Assets/Prefabs/AudioSlider.prefab
+- Assets/Prefabs/Show Panel.prefab
 Dependencies: []
