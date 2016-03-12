@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace Fireworks.UI
 {
 	/// <summary>
-	/// Creates all of the fireworks UI.
+	/// This class creates all the UI elements needed for the fireworks UI.
 	/// </summary>
 	public class FireworksUIBuilder : MonoBehaviour
 	{
@@ -18,7 +18,7 @@ namespace Fireworks.UI
 		private UIWindowFrame fireworksWindowFrame;
 		private FireworkLauncherItemEntry launcherItemEntry;
 
-		private UIMenuButton clone;
+		private UIMenuButton fireworkBuilderButton;
 
 		public static GameObject rectTfmPrefab
 		{
@@ -95,9 +95,13 @@ namespace Fireworks.UI
 				{
 					decorationWindow = Instantiate(button.windowContentGO);
 					builderTab = decorationWindow.gameObject.GetComponentInChildren<DecoBuilderTab>();
+
+					// Copy the menu button
 					GameObject fireworkUIMenuButton = Instantiate(button.gameObject);
 					fireworkUIMenuButton.transform.SetParent(button.transform.parent, false);
-					clone = fireworkUIMenuButton.GetComponent<UIMenuButton>();
+					fireworkBuilderButton = fireworkUIMenuButton.GetComponent<UIMenuButton>();
+
+					// Reposition the clone
 					RectTransform cloneTfm = fireworkUIMenuButton.GetComponent<RectTransform>();
 					Vector2 anchorMin = cloneTfm.anchorMin;
 					Vector2 anchorMax = cloneTfm.anchorMax;
@@ -106,11 +110,14 @@ namespace Fireworks.UI
 					cloneTfm.anchorMin = anchorMin;
 					cloneTfm.anchorMax = anchorMax;
 					fireworkUIMenuButton.name = "FireworkBuilder";
+
+					// Add a tooltip to tell players what this new tab is
 					UITooltip tooltip = fireworkUIMenuButton.GetComponent<UITooltip>();
 					tooltip.text = "Firework Builder";
 					break;
 				}
 			}
+			// This steals the materials from the Deco Builder so we can use them ourselves on our own objects
 			if (builderTab != null)
 			{
 				Builder builder = Instantiate(builderTab.builderGO);
@@ -131,7 +138,7 @@ namespace Fireworks.UI
 			fireworksWindow = windowGO.AddComponent<FireworksWindow>();
 
 			// When our tab is clicked, it'll open up the new window
-			clone.windowContentGO = fireworksWindow;
+			fireworkBuilderButton.windowContentGO = fireworksWindow;
 		}
 
 		private void MakeShowWindow()
@@ -166,7 +173,7 @@ namespace Fireworks.UI
 		public void CleanUp()
 		{
 			Destroy(fireworksWindow.gameObject);
-			Destroy(clone.gameObject);
+			Destroy(fireworkBuilderButton.gameObject);
 		}
 	}
 }
