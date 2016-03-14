@@ -1,5 +1,6 @@
 ﻿using Fireworks.Loaders;
 using Fireworks.Music;
+using Fireworks.Show;
 using Parkitect.UI;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using UnityEngine.UI;
 
 namespace Fireworks.UI
 {
-	class ShowWindow : UIWindow
+	public class ShowWindow : UIWindow
 	{
 		private const string AUDIO_SLIDER_NAME = "Show Panel";
 
@@ -21,11 +22,13 @@ namespace Fireworks.UI
 		public static Button pauseButton;
 
 		private static Button addFireworkButton;
-		private static Dropdown fireworkDropdown;
+		public static Dropdown fireworkDropdown;
 
-		private Dictionary<string, List<Firework>> fireworkLaunchTimes = new Dictionary<string, List<Firework>>();
-		private static List<Firework> currentFireworkList;
 		private string currentTime = "0.00";
+
+		private static List<ShowTrack> allTracks = new List<ShowTrack>();
+		private static ShowTrack currentTrack = null;
+		private static Transform trackParent;
 
 		protected override void Start()
 		{
@@ -47,6 +50,7 @@ namespace Fireworks.UI
 			addFireworkButton = detailPanel.transform.FindChild("Add Firework Button").GetComponent<Button>();
 			addFireworkButton.onClick.AddListener(new UnityAction(AddFirework));
 			fireworkDropdown = detailPanel.GetComponentInChildren<Dropdown>();
+			PopulateDropdown();
 			addFireworkButton.interactable = false;
 			fireworkDropdown.interactable = false;
 
@@ -60,8 +64,46 @@ namespace Fireworks.UI
 			pauseButton.onClick.AddListener(new UnityAction(PauseSong));
 			pauseButton.interactable = false;
 
+			// Tracks
+			Transform trackPanel = sliderGO.transform.FindChild("Scroll View/Viewport/Content/Track Template");
+			trackParent = trackPanel.parent;
+			trackPanel.gameObject.SetActive(false);
+			ShowTrack.trackTemplate = trackPanel.gameObject;
+
 			// Load song
 			StartCoroutine(LoadClip());
+		}
+
+		public static void AddTrack(FireworkLauncher launcher)
+		{
+			ShowTrack track = new ShowTrack(trackParent, launcher);
+			allTracks.Add(track);
+		}
+
+		public static void ChangeTrack(ShowTrack newTrack)
+		{
+			if (newTrack == null || newTrack.isActive)
+			{
+				// If it's the active track, update our active track
+				// If it's null, make our new track null
+				currentTrack = newTrack;
+			}
+			else if (newTrack == currentTrack)
+			{
+				// It's not active, but it's listed as our active track
+				currentTrack = null;
+			}
+
+			if (currentTrack == null)
+			{
+				addFireworkButton.interactable = false;
+				fireworkDropdown.interactable = false;
+			}
+			else
+			{
+				addFireworkButton.interactable = true;
+				fireworkDropdown.interactable = true;
+			}
 		}
 
 		private IEnumerator LoadClip()
@@ -104,69 +146,52 @@ namespace Fireworks.UI
 		private void OnScrub(float newValue)
 		{
 			currentTime = newValue.ToString("0.00");
-			if (!fireworkLaunchTimes.ContainsKey(currentTime))
-			{
-				fireworkLaunchTimes[currentTime] = new List<Firework>();
-			}
-			currentFireworkList = fireworkLaunchTimes[currentTime];
 			UpdateDropdown();
 			if (sliderSource.isPlaying)
 			{
-				foreach (Firework firework in currentFireworkList)
+				foreach (ShowTrack track in allTracks)
 				{
-					firework.Launch();
+					track.TryLaunchFireworks(currentTime);
 				}
 			}
 		}
 
 		private void AddFirework()
 		{
-			if (FireworkLauncher.builtLaunchers.Count == 0)
+			if (currentTrack == null)
 			{
 				return;
 			}
-			Firework firework = new Firework();
-			firework.launcher = FireworkLauncher.builtLaunchers[fireworkDropdown.value];
-			currentFireworkList.Add(firework);
-			fireworkLaunchTimes[currentTime] = currentFireworkList;
-			UpdateDropdown();
+			currentTrack.ToggleKeyframe(currentTime, fireworkDropdown.value);
 		}
 
-		public static void UpdateDropdown()
+		private void PopulateDropdown()
 		{
-			fireworkDropdown.value = 0;
 			fireworkDropdown.ClearOptions();
-			if (FireworkLauncher.builtLaunchers.Count == 0)
+			string[] defaultFireworkNames = new string[]
 			{
-				fireworkDropdown.interactable = false;
-				addFireworkButton.interactable = false;
+				 "Firework-1"
+			};
+			List<string> allFireworks = new List<string>(defaultFireworkNames);
+			// Load custom fireworks here later
+			fireworkDropdown.AddOptions(allFireworks);
+		}
+
+		private void UpdateDropdown()
+		{
+			if (currentTrack == null)
+			{
 				return;
 			}
-
-			List<string> fireworkStrings = new List<string>();
-			List<FireworkLauncher> usedLaunchers = new List<FireworkLauncher>();
-			foreach (Firework firework in currentFireworkList)
+			int fireworkIndex = currentTrack.GetFireworkIndexAtTime(currentTime);
+			if (fireworkIndex >= 0)
 			{
-				if (firework.launcher == null)
-				{
-					continue;
-				}
-				fireworkStrings.Add(firework.ToString());
-				usedLaunchers.Add(firework.launcher);
+				fireworkDropdown.value = fireworkIndex;
 			}
-
-			foreach (FireworkLauncher launcher in FireworkLauncher.builtLaunchers)
+			else if (sliderSource.isPlaying)
 			{
-				if (usedLaunchers.Contains(launcher))
-				{
-					continue;
-				}
-				fireworkStrings.Add(launcher.name);
+				fireworkDropdown.value = 0;
 			}
-			fireworkStrings.Reverse();
-			fireworkDropdown.AddOptions(fireworkStrings);
-			fireworkDropdown.interactable = true;
-			addFireworkButton.interactable = true;
 		}
 
 		private void PlaySong()

@@ -1,5 +1,6 @@
 ﻿using Fireworks.UI;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace Fireworks
 {
@@ -17,6 +18,44 @@ namespace Fireworks
 			ghostIntersectMaterial = FireworksUIBuilder.ghostIntersectMat;
 			ghostCantBuildMaterial = FireworksUIBuilder.ghostCantBuildMat;
 			base.Awake();
+		}
+
+		protected override float getHeightChangeDelta()
+		{
+			try
+			{
+				return base.getHeightChangeDelta();
+			}
+			catch (System.NullReferenceException)
+			{
+				// There's issues with getting null references sometimes
+				// Everything works fine, it just clogs up the log
+				return 0.0f;
+			}
+		}
+
+		protected override Vector3 makeValidBuildPosition(Vector3 position)
+		{
+			try
+			{
+				return base.makeValidBuildPosition(position);
+			}
+			catch (System.NullReferenceException)
+			{
+				return Vector3.zero;
+			}
+		}
+
+		protected override void Update()
+		{
+			try
+			{
+				base.Update();
+			}
+			catch (System.NullReferenceException)
+			{
+
+			}
 		}
 	}
 }

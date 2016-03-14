@@ -35,13 +35,12 @@ namespace Fireworks
 		private static void AddLauncher(FireworkLauncher launcher)
 		{
 			builtLaunchers.Add(launcher);
-			ShowWindow.UpdateDropdown();
+			ShowWindow.AddTrack(launcher);
 		}
 
 		private static void RemoveLauncher(FireworkLauncher launcher)
 		{
 			builtLaunchers.Remove(launcher);
-			ShowWindow.UpdateDropdown();
 		}
 	}
 }

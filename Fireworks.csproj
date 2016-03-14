@@ -84,6 +84,8 @@
     <Compile Include="Loaders\MusicFileLoader.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Music\WaveformMaker.cs" />
+    <Compile Include="Show\ShowKeyframe.cs" />
+    <Compile Include="Show\ShowTrack.cs" />
     <Compile Include="UI\FireworkLauncherItemEntry.cs" />
     <Compile Include="UI\FireworkLauncherBuilderTab.cs" />
     <Compile Include="UI\FireworksUIBuilder.cs" />
