@@ -86,10 +86,18 @@ namespace Fireworks.UI
 			{
 				// If it's the active track, update our active track
 				// If it's null, make our new track null
+				if (currentTrack != null)
+				{
+					currentTrack.OnBecomeInactiveTrack();
+				}
 				currentTrack = newTrack;
 			}
 			else if (newTrack == currentTrack)
 			{
+				if (currentTrack != null)
+				{
+					currentTrack.OnBecomeInactiveTrack();
+				}
 				// It's not active, but it's listed as our active track
 				currentTrack = null;
 			}
@@ -103,6 +111,7 @@ namespace Fireworks.UI
 			{
 				addFireworkButton.interactable = true;
 				fireworkDropdown.interactable = true;
+				currentTrack.OnBecomeActiveTrack();
 			}
 		}
 

@@ -10,6 +10,8 @@ namespace Fireworks.Show
 	{
 		public ShowTrack(Transform trackParent, FireworkLauncher launcher)
 		{
+			this.launcher = launcher;
+
 			GameObject trackInstance = Object.Instantiate(trackTemplate);
 			trackInstance.gameObject.SetActive(true);
 			trackInstance.transform.SetParent(trackParent, false);
@@ -25,8 +27,6 @@ namespace Fireworks.Show
 
 			enableTrackToggle.onValueChanged.AddListener(new UnityAction<bool>(OnTrackEnableChange));
 			enableTrackToggle.isOn = true;
-
-			this.launcher = launcher;
 		}
 
 		private static int trackNumber = 0;
@@ -39,6 +39,8 @@ namespace Fireworks.Show
 
 		private FireworkLauncher launcher;
 		public Transform keyframeParent;
+
+		private GameObject selectedLauncherGO;
 
 		private Dictionary<string, ShowKeyframe> trackKeyframes = new Dictionary<string, ShowKeyframe>();
 		private Dictionary<string, Firework> trackFireworks = new Dictionary<string, Firework>();
@@ -96,6 +98,21 @@ namespace Fireworks.Show
 			}
 
 			ShowWindow.ChangeTrack(this);
+		}
+
+		public void OnBecomeActiveTrack()
+		{
+			selectedLauncherGO = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+			selectedLauncherGO.transform.parent = launcher.transform;
+			selectedLauncherGO.transform.localPosition = Vector3.up;
+			Color ghostColor = Color.green;
+			ghostColor.a = 0.25f;
+			selectedLauncherGO.GetComponent<Renderer>().material.color = ghostColor;
+		}
+
+		public void OnBecomeInactiveTrack()
+		{
+			Object.Destroy(selectedLauncherGO);
 		}
 
 		public void ToggleKeyframe(ShowKeyframe keyframe)
