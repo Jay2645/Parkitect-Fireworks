@@ -8,27 +8,6 @@ namespace Fireworks.Show
 {
 	public class ShowTrack
 	{
-		public ShowTrack(Transform trackParent, FireworkLauncher launcher)
-		{
-			this.launcher = launcher;
-
-			GameObject trackInstance = Object.Instantiate(trackTemplate);
-			trackInstance.gameObject.SetActive(true);
-			trackInstance.transform.SetParent(trackParent, false);
-
-			trackInstance.name = "Track " + trackNumber;
-			trackNumber++;
-
-			keyframeParent = trackInstance.transform.FindChild("Track");
-			CreateKeyframes(keyframeParent);
-
-			Transform trackEnabled = trackInstance.transform.FindChild("Enable Track");
-			Toggle enableTrackToggle = trackEnabled.GetComponent<Toggle>();
-
-			enableTrackToggle.onValueChanged.AddListener(new UnityAction<bool>(OnTrackEnableChange));
-			enableTrackToggle.isOn = true;
-		}
-
 		private static int trackNumber = 0;
 		public static GameObject trackTemplate = null;
 		public bool isActive
@@ -37,13 +16,44 @@ namespace Fireworks.Show
 			private set;
 		}
 
-		private FireworkLauncher launcher;
+		public string showName;
+		private Mortar launcher;
 		public Transform keyframeParent;
 
 		private GameObject selectedLauncherGO;
 
 		private Dictionary<string, ShowKeyframe> trackKeyframes = new Dictionary<string, ShowKeyframe>();
-		private Dictionary<string, Firework> trackFireworks = new Dictionary<string, Firework>();
+
+		public static ShowTrack MakeTrack(Transform trackParent, Mortar launcher, string showName)
+		{
+			if (trackTemplate == null)
+			{
+				Debug.Log("Track Template has not been set! Total number of tracks: " + trackNumber);
+				return null;
+			}
+
+			ShowTrack track = new ShowTrack();
+			track.launcher = launcher;
+			track.showName = showName;
+
+			GameObject trackInstance = Object.Instantiate(trackTemplate);
+			trackInstance.gameObject.SetActive(true);
+			trackInstance.transform.SetParent(trackParent, false);
+
+			trackInstance.name = "Track " + trackNumber;
+			trackNumber++;
+
+			track.keyframeParent = trackInstance.transform.FindChild("Track");
+			track.CreateKeyframes(track.keyframeParent);
+
+			Transform trackEnabled = trackInstance.transform.FindChild("Enable Track");
+			Toggle enableTrackToggle = trackEnabled.GetComponent<Toggle>();
+
+			enableTrackToggle.onValueChanged.AddListener(new UnityAction<bool>(track.OnTrackEnableChange));
+			enableTrackToggle.isOn = true;
+
+			return track;
+		}
 
 		private void CreateKeyframes(Transform trackPanel)
 		{
@@ -74,6 +84,7 @@ namespace Fireworks.Show
 				}
 				keyframe.name = keyframeName;
 				showKeyframe.time = keyframeName;
+				showKeyframe.isOn = launcher.HasFirework(showName, keyframeName);
 				showKeyframe.track = this;
 				trackKeyframes[keyframeName] = showKeyframe;
 			}
@@ -121,11 +132,11 @@ namespace Fireworks.Show
 			if (keyframe.isOn)
 			{
 				Dropdown.OptionData fireworkOption = ShowWindow.fireworkDropdown.options[dropdownValue];
-				trackFireworks[keyframe.time] = new Firework(fireworkOption.text, dropdownValue, launcher);
+				launcher.AddFirework(showName, keyframe.time, fireworkOption.text);
 			}
 			else
 			{
-				trackFireworks.Remove(keyframe.time);
+				launcher.RemoveFirework(showName, keyframe.time);
 			}
 		}
 
@@ -136,11 +147,11 @@ namespace Fireworks.Show
 			if (keyframeIsActive)
 			{
 				Dropdown.OptionData fireworkOption = ShowWindow.fireworkDropdown.options[dropdownValue];
-				trackFireworks[currentTime] = new Firework(fireworkOption.text, dropdownValue, launcher);
+				launcher.AddFirework(showName, currentTime, fireworkOption.text);
 			}
 			else
 			{
-				trackFireworks.Remove(currentTime);
+				launcher.RemoveFirework(showName, currentTime);
 			}
 		}
 
@@ -148,7 +159,7 @@ namespace Fireworks.Show
 		{
 			if (trackKeyframes[currentTime].isOn)
 			{
-				trackFireworks[currentTime].Launch();
+				launcher.PlayShow(showName, currentTime);
 			}
 		}
 
@@ -156,12 +167,18 @@ namespace Fireworks.Show
 		{
 			if (trackKeyframes[currentTime].isOn)
 			{
-				return trackFireworks[currentTime].fireworkIndex;
+				string fireworkName = launcher.GetFireworkNameAtTime(showName, currentTime);
+				for (int i = 0; i < ShowWindow.fireworkDropdown.options.Count; i++)
+				{
+					Dropdown.OptionData fireworkOption = ShowWindow.fireworkDropdown.options[i];
+					if (fireworkOption.text == fireworkName)
+					{
+						return i;
+					}
+				}
 			}
-			else
-			{
-				return -1;
-			}
+
+			return -1;
 		}
 	}
 }

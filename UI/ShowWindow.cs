@@ -74,10 +74,13 @@ namespace Fireworks.UI
 			StartCoroutine(LoadClip());
 		}
 
-		public static void AddTrack(FireworkLauncher launcher)
+		public static void AddTrack(Mortar launcher)
 		{
-			ShowTrack track = new ShowTrack(trackParent, launcher);
-			allTracks.Add(track);
+			ShowTrack track = ShowTrack.MakeTrack(trackParent, launcher, "Show");
+			if (track != null)
+			{
+				allTracks.Add(track);
+			}
 		}
 
 		public static void ChangeTrack(ShowTrack newTrack)

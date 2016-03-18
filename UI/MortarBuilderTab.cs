@@ -7,7 +7,7 @@ namespace Fireworks.UI
 	/// <summary>
 	/// The tab where players can select the firework launcher they want to build.
 	/// </summary>
-	public class FireworkLauncherBuilderTab : BuilderTab
+	public class MortarBuilderTab : BuilderTab
 	{
 		protected override void Awake()
 		{
@@ -31,7 +31,7 @@ namespace Fireworks.UI
 			uiBuilderEntry.AddComponent<CanvasRenderer>();
 			uiBuilderEntry.AddComponent<RawImage>();
 			Button button = uiBuilderEntry.AddComponent<Button>();
-			FireworkLauncherItemEntry builderEntry = uiBuilderEntry.AddComponent<FireworkLauncherItemEntry>();
+			MortarItemEntry builderEntry = uiBuilderEntry.AddComponent<MortarItemEntry>();
 			builderEntry.name = "UI Entry";
 
 			// Also requires texts for the name and the price of the entry
@@ -83,15 +83,20 @@ namespace Fireworks.UI
 		private void MakeBuilder()
 		{
 			GameObject fireworkBuilder = new GameObject("Firework Builder");
-			FireworkLauncherBuilder builder = fireworkBuilder.AddComponent<FireworkLauncherBuilder>();
+			MortarBuilder builder = fireworkBuilder.AddComponent<MortarBuilder>();
 			builderGO = builder;
 		}
 
 		protected override void addItems()
 		{
 			// Add all firework launchers
-			foreach (FireworkLauncher launcher in FireworkLauncherBuilder.allLaunchers)
+			foreach (Mortar launcher in MortarBuilder.prefabLaunchers)
 			{
+				if (launcher == null)
+				{
+					Debug.Log("Null launcher in MortarBuilder!");
+					continue;
+				}
 				addItem(launcher);
 			}
 		}
@@ -100,6 +105,12 @@ namespace Fireworks.UI
 		{
 			base.onBuilt(builtObjectInstance);
 			this.GetComponentInParent<UIWindowFrame>().close();
+		}
+
+		public void CleanUp()
+		{
+			ObjectPoolExtensions.DestroyAll(builderItemEntryGO);
+			builderItemEntryGO = null;
 		}
 	}
 }

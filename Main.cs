@@ -20,11 +20,14 @@ namespace Fireworks
 			LauncherCreator.CreateLaunchers();
 			uiBuilder = go.AddComponent<FireworksUIBuilder>();
 			ReadSettingsFile();
+			Debug.Log("Loaded Fireworks mod.");
 		}
 
 		public void onDisabled()
 		{
-
+			uiBuilder.CleanUp();
+			LauncherCreator.CleanUpLaunchers();
+			Debug.Log("Cleaned up Fireworks mod.");
 		}
 		#endregion
 

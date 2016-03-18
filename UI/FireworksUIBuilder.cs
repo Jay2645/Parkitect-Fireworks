@@ -15,8 +15,6 @@ namespace Fireworks.UI
 		public static Material ghostCantBuildMat;
 
 		private FireworksWindow fireworksWindow;
-		private UIWindowFrame fireworksWindowFrame;
-		private FireworkLauncherItemEntry launcherItemEntry;
 
 		private UIMenuButton fireworkBuilderButton;
 
@@ -172,6 +170,7 @@ namespace Fireworks.UI
 
 		public void CleanUp()
 		{
+			fireworksWindow.CleanUp();
 			Destroy(fireworksWindow.gameObject);
 			Destroy(fireworkBuilderButton.gameObject);
 		}

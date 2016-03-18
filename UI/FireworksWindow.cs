@@ -8,15 +8,20 @@ namespace Fireworks.UI
 	/// </summary>
 	public class FireworksWindow : UIWindow
 	{
-		private FireworkLauncherBuilderTab buildertab;
+		private MortarBuilderTab buildertab;
 
 		protected override void Start()
 		{
 			base.Start();
 			// Create a child Transform holding the builder tab
-			GameObject buildertabGO = Instantiate<GameObject>(FireworksUIBuilder.rectTfmPrefab);
+			GameObject buildertabGO = Instantiate(FireworksUIBuilder.rectTfmPrefab);
 			buildertabGO.transform.SetParent(transform, false);
-			buildertab = buildertabGO.AddComponent<FireworkLauncherBuilderTab>();
+			buildertab = buildertabGO.AddComponent<MortarBuilderTab>();
+		}
+
+		public void CleanUp()
+		{
+			buildertab.CleanUp();
 		}
 	}
 }

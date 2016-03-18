@@ -1,65 +1,55 @@
 ﻿using Fireworks.Loaders;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Fireworks
 {
 	/// <summary>
-	/// A firework that will be shot out of a FireworkLauncher during a Show.
+	/// Fetches and manages all the firework particle effects.
 	/// </summary>
-	public class Firework
+	public static class Firework
 	{
-		public ParticleSystem fireworkParticle;
-		public int fireworkIndex = -1;
-		public FireworkLauncher launcher;
+		private static Dictionary<string, ParticleSystem> loadedFireworks = new Dictionary<string, ParticleSystem>();
 
-		private const string DEFAULT_FIREWORK_STRING = "Firework-1";
+		/// <summary>
+		/// How long we wait after the firework is launched before it is destroyed.
+		/// </summary>
+		private const float FIREWORK_DESTROY_TIME = 10.0f;
 
-		private static ParticleSystem defaultFirework = null;
-
-		public Firework(string fireworkParticleName, int index, FireworkLauncher launcher)
+		public static ParticleSystem GetFirework(string name)
 		{
-			fireworkParticle = LoadFirework(fireworkParticleName);
-			this.launcher = launcher;
-		}
-
-		private void SetDefaultFirework()
-		{
-			if (defaultFirework == null)
+			ParticleSystem firework;
+			if (!loadedFireworks.TryGetValue(name, out firework))
 			{
-				defaultFirework = LoadFirework(DEFAULT_FIREWORK_STRING);
+				firework = LoadFirework(name);
 			}
-			fireworkParticle = defaultFirework;
+			if (firework == null)
+			{
+				return null;
+			}
+			else
+			{
+				ParticleSystem fireworkInstance = Object.Instantiate(firework);
+				fireworkInstance.loop = false;
+				// Clean up the firework when it's done being launched
+				Object.Destroy(fireworkInstance, FIREWORK_DESTROY_TIME);
+				return fireworkInstance;
+			}
 		}
 
 		private static ParticleSystem LoadFirework(string toLoad)
 		{
 			GameObject fireworkGO = AssetBundleLoader.LoadAsset("firework", toLoad);
+			if (fireworkGO == null)
+			{
+				Debug.Log("No firework found with name: " + toLoad);
+				return null;
+			}
 			ParticleSystem firework = fireworkGO.GetComponent<ParticleSystem>();
 			firework.loop = false;
 			firework.transform.position = new Vector3(0.0f, 999.0f, 0.0f);
+			loadedFireworks[toLoad] = firework;
 			return firework;
-		}
-
-		public override string ToString()
-		{
-			if (fireworkParticle == null)
-			{
-				return "None";
-			}
-			else
-			{
-				return launcher.name + "(" + fireworkParticle.name + ")";
-			}
-		}
-
-		public void Launch()
-		{
-			if (fireworkParticle != null && launcher != null)
-			{
-				ParticleSystem firework = (ParticleSystem)Object.Instantiate(fireworkParticle, launcher.transform.position, Quaternion.Euler(-90.0f, 0.0f, 0.0f));
-				firework.loop = false;
-				Object.Destroy(firework.gameObject, 10.0f);
-			}
 		}
 	}
 }
