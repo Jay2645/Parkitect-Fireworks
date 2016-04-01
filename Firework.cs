@@ -49,7 +49,13 @@ namespace Fireworks
 			firework.loop = false;
 			firework.transform.position = new Vector3(0.0f, 999.0f, 0.0f);
 			loadedFireworks[toLoad] = firework;
+			Debug.Log("Loaded " + firework);
 			return firework;
+		}
+
+		public static void CleanUp()
+		{
+			loadedFireworks.Clear();
 		}
 	}
 }

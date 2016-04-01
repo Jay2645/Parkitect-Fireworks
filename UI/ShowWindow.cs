@@ -30,6 +30,8 @@ namespace Fireworks.UI
 		private static ShowTrack currentTrack = null;
 		private static Transform trackParent;
 
+		public static string currentShow = "Show";
+
 		protected override void Start()
 		{
 			base.Start();
@@ -76,7 +78,7 @@ namespace Fireworks.UI
 
 		public static void AddTrack(Mortar launcher)
 		{
-			ShowTrack track = ShowTrack.MakeTrack(trackParent, launcher, "Show");
+			ShowTrack track = ShowTrack.MakeTrack(trackParent, launcher, currentShow);
 			if (track != null)
 			{
 				allTracks.Add(track);

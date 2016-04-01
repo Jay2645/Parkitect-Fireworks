@@ -35,6 +35,7 @@ namespace Fireworks
 				mortar.CleanUp();
 			}
 			MortarBuilder.prefabLaunchers.Clear();
+			Firework.CleanUp();
 		}
 	}
 }

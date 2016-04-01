@@ -80,9 +80,11 @@ namespace Fireworks
 		/// * The key of the second Dictionary contains the time a firework is launched.
 		/// * The value of the second Dictionary contains the name of the firework that is launched.
 		/// </summary>
-		//[Serialized]
 		public List<MortarShow> shows = new List<MortarShow>();
-		//public Dictionary<string, Dictionary<string, string>> shows = new Dictionary<string, Dictionary<string, string>>();
+
+		private string lastShowTime = "";
+
+		private bool wasLoadedFromFile = false;
 
 		protected override void Awake()
 		{
@@ -147,11 +149,54 @@ namespace Fireworks
 			return currentShow.GetFireworkName(showTime);
 		}
 
+		public Dictionary<string, string> GetAllFireworksForShow(string showName)
+		{
+			MortarShow currentShow = GetShow(showName);
+			if (currentShow == null)
+			{
+				return null;
+			}
+			return currentShow.fireworkTimes;
+		}
+
+
 		public bool HasFirework(string showName, string showTime)
 		{
 			return GetFireworkNameAtTime(showName, showTime) != string.Empty;
 		}
 
+		public bool IsPartOfShow(string showName)
+		{
+			return GetShow(showName) != null;
+		}
+
+		public void UpdateShowTimes(string showName, Dictionary<string, string> fireworkTimes)
+		{
+			if (shows == null || shows.Count == 0)
+			{
+				foreach (KeyValuePair<string, string> kvp in fireworkTimes)
+				{
+					AddFirework(showName, kvp.Key, kvp.Value);
+				}
+			}
+			else
+			{
+				for (int i = 0; i < shows.Count; i++)
+				{
+					if (shows[i].showName == showName)
+					{
+						shows[i].fireworkTimes = fireworkTimes;
+						return;
+					}
+				}
+				Debug.Log("No firework show for " + this + " was found with the name " + showName + "!");
+				Debug.Log("List of valid show names:");
+				for (int i = 0; i < shows.Count; i++)
+				{
+					Debug.Log(shows[i].showName);
+				}
+			}
+		}
 
 		private MortarShow GetShow(string showName)
 		{
@@ -174,9 +219,15 @@ namespace Fireworks
 		/// <param name="showTime">The time in the show to launch the fireworks.</param>
 		public void PlayShow(string showName, string showTime)
 		{
+			if (showTime == lastShowTime)
+			{
+				return;
+			}
+			lastShowTime = showTime;
 			string fireworkName = GetFireworkNameAtTime(showName, showTime);
 			if (!string.IsNullOrEmpty(fireworkName))
 			{
+				Debug.Log("Launching " + fireworkName + " at " + showTime);
 				LaunchFirework(fireworkName);
 			}
 		}
@@ -184,12 +235,13 @@ namespace Fireworks
 		private void LaunchFirework(string fireworkToLaunch)
 		{
 			ParticleSystem firework = Firework.GetFirework(fireworkToLaunch);
-			if (firework == null)
+			if (firework == null || firework.transform == null)
 			{
 				throw new System.NullReferenceException("Firework " + fireworkToLaunch + " was invalid!");
 			}
 			else
 			{
+				Debug.Log(this + " is launching " + firework);
 				firework.transform.position = transform.position;
 				firework.transform.rotation = Quaternion.Euler(-90.0f, 0.0f, 0.0f);
 			}
@@ -221,12 +273,28 @@ namespace Fireworks
 			{
 				shows.Add(MortarShow.Deserialize((Dictionary<string, object>)list[index]));
 			}
+			wasLoadedFromFile = true;
 		}
 
 		private static void AddLauncher(Mortar launcher)
 		{
 			builtLaunchers.Add(launcher);
-			ShowWindow.AddTrack(launcher);
+			launcher.name = "Mortar " + builtLaunchers.Count;
+			if (launcher.wasLoadedFromFile)
+			{
+				foreach (MortarShow show in launcher.shows)
+				{
+					if (show.showName == ShowWindow.currentShow)
+					{
+						ShowWindow.AddTrack(launcher);
+						break;
+					}
+				}
+			}
+			else
+			{
+				ShowWindow.AddTrack(launcher);
+			}
 		}
 
 		private static void RemoveLauncher(Mortar launcher)
