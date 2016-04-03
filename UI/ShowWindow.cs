@@ -4,6 +4,7 @@ using Fireworks.Show;
 using Parkitect.UI;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -17,7 +18,7 @@ namespace Fireworks.UI
 		private static AudioSource sliderSource;
 		private AudioClip clip;
 		private static Slider scrubSlider;
-		private static Text scrubberText;
+		private static Dropdown scrubberDropdown;
 		public static Button playButton;
 		public static Button pauseButton;
 
@@ -42,9 +43,16 @@ namespace Fireworks.UI
 			scrubSlider = sliderGO.GetComponentInChildren<Slider>();
 			scrubSlider.value = 0.0f;
 			sliderSource = sliderGO.GetComponentInChildren<AudioSource>();
-			Transform fileTextTfm = scrubSlider.transform.parent.FindChild("File Text");
-			scrubberText = fileTextTfm.GetComponent<Text>();
 			scrubSlider.onValueChanged.AddListener(new UnityAction<float>(OnScrub));
+			WaveformMaker waveformMaker = sliderSource.gameObject.AddComponent<WaveformMaker>();
+			waveformMaker.slider = scrubSlider;
+
+			// Load file dropdown
+			Transform fileDropdownTfm = scrubSlider.transform.parent.FindChild("File List Dropdown");
+			scrubberDropdown = fileDropdownTfm.GetComponent<Dropdown>();
+			PopulateFileDropdownList();
+			scrubberDropdown.onValueChanged.AddListener(new UnityAction<int>(OnFileDropdownChanged));
+
 			scrubSlider.gameObject.SetActive(false);
 
 			// Firework Details
@@ -71,9 +79,6 @@ namespace Fireworks.UI
 			trackParent = trackPanel.parent;
 			trackPanel.gameObject.SetActive(false);
 			ShowTrack.trackTemplate = trackPanel.gameObject;
-
-			// Load song
-			StartCoroutine(LoadClip());
 		}
 
 		public static void AddTrack(Mortar launcher)
@@ -120,40 +125,83 @@ namespace Fireworks.UI
 			}
 		}
 
+		private void PopulateFileDropdownList()
+		{
+			string path = AssetBundleLoader.Path + System.IO.Path.DirectorySeparatorChar + "Audio" + System.IO.Path.DirectorySeparatorChar;
+			string[] pathFiles = Directory.GetFiles(path);
+
+			List<string> audioFiles = new List<string>();
+			foreach (string file in pathFiles)
+			{
+				string extension = System.IO.Path.GetExtension(file).ToLower();
+				if (extension != ".wav" && extension != ".ogg")
+				{
+					continue;
+				}
+				audioFiles.Add(System.IO.Path.GetFileName(file));
+			}
+			scrubberDropdown.AddOptions(audioFiles);
+		}
+
+		public void OnFileDropdownChanged(int newValue)
+		{
+			if (newValue == 0)
+			{
+				scrubSlider.gameObject.SetActive(false);
+				playButton.interactable = false;
+				pauseButton.interactable = false;
+				clip = null;
+			}
+			else
+			{
+				StartCoroutine(LoadClip());
+			}
+		}
+
 		private IEnumerator LoadClip()
 		{
 			scrubSlider.gameObject.SetActive(false);
 			playButton.interactable = false;
 			pauseButton.interactable = false;
-			WWW www = MusicFileLoader.GetClipFromFile("tiki.wav");
-			if (www == null)
+			int scrubberValue = scrubberDropdown.value;
+			if (scrubberValue > 0)
 			{
-				Debug.Log("WWW was null!");
-			}
-			clip = www.audioClip;
-			if (clip == null)
-			{
-				Debug.Log("WWW did not return clip! " + www.error + ", " + www.url);
-			}
-			AudioDataLoadState loadState = clip.loadState;
-			while (clip.loadState == AudioDataLoadState.Loading || clip.loadState == AudioDataLoadState.Unloaded)
-			{
-				yield return null;
-			}
-			if (clip.loadState != AudioDataLoadState.Loaded)
-			{
-				clip = null;
-				Debug.Log("Could not load audioclip at " + www.url + "! Load state :" + clip.loadState + ", Error: " + www.error);
-			}
-			else
-			{
-				scrubSlider.gameObject.SetActive(true);
-				playButton.interactable = true;
-				Debug.Log("Loaded " + clip + ". Size: " + clip.samples);
-				sliderSource.clip = clip;
-				scrubberText.text = www.url;
-				WaveformMaker waveformMaker = sliderSource.gameObject.AddComponent<WaveformMaker>();
-				waveformMaker.slider = scrubSlider;
+				Dropdown.OptionData currentOption = scrubberDropdown.options[scrubberValue];
+				WWW www = MusicFileLoader.GetClipFromFile(currentOption.text);
+				if (www == null)
+				{
+					Debug.Log("WWW was null!");
+				}
+				else
+				{
+					clip = www.audioClip;
+					if (clip == null)
+					{
+						Debug.Log("WWW did not return clip! " + www.error + ", " + www.url);
+					}
+					else
+					{
+						AudioDataLoadState loadState = clip.loadState;
+						while (clip.loadState == AudioDataLoadState.Loading || clip.loadState == AudioDataLoadState.Unloaded)
+						{
+							yield return null;
+						}
+						if (clip.loadState != AudioDataLoadState.Loaded)
+						{
+							clip = null;
+							Debug.Log("Could not load audioclip at " + www.url + "! Load state :" + clip.loadState + ", Error: " + www.error);
+						}
+						else
+						{
+							scrubSlider.gameObject.SetActive(true);
+							playButton.interactable = true;
+							Debug.Log("Loaded " + clip + ". Size: " + clip.samples);
+							sliderSource.clip = clip;
+							WaveformMaker waveformMaker = sliderSource.gameObject.GetComponent<WaveformMaker>();
+							waveformMaker.UpdateClip();
+						}
+					}
+				}
 			}
 		}
 

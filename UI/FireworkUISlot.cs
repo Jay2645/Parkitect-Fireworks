@@ -47,6 +47,12 @@ namespace Fireworks.UI.Tracks
 			Debug.Log("Moved " + draggedFirework.Firework + " from " + initialParent.mortarParent + " at " + initialTime + " to " + parentTrack.mortarParent + " at " + Time);
 
 			targetFirework.RecalculatePosition();
+
+			initialParent.ForceUpdateMortar();
+			if (initialParent != parentTrack)
+			{
+				parentTrack.ForceUpdateMortar();
+			}
 		}
 	}
 }

@@ -21,7 +21,8 @@ namespace Fireworks.Music
 			source = gameObject.GetComponent<AudioSource>();
 			Image image = gameObject.GetComponent<Image>();
 			image.color = Color.white;
-			image.sprite = GetMusicTimeline(source.clip, waveformColor, backgroundColor);
+
+			UpdateClip();
 
 			slider.onValueChanged.AddListener(new UnityEngine.Events.UnityAction<float>(ChangeClipTime));
 		}
@@ -42,6 +43,14 @@ namespace Fireworks.Music
 					source.Stop();
 					slider.value = 0.0f;
 				}
+			}
+		}
+
+		public void UpdateClip()
+		{
+			if (source.clip != null)
+			{
+				gameObject.GetComponent<Image>().sprite = GetMusicTimeline(source.clip, waveformColor, backgroundColor);
 			}
 		}
 
